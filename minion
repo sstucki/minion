@@ -1,0 +1,23 @@
+#!/bin/sh
+
+minion_topdir=$(dirname "$0")
+minion_bindir="${minion_topdir}/target"
+
+minion_jar=$(\
+  ls -1 "${minion_bindir}"/scala-*/Minion-assembly-*.jar 2>/dev/null | Head -1)
+if [ -z "${minion_jar}" ]; then
+  echo "Minion fat JAR file not found. Try running"    >&2
+  echo                                             >&2
+  echo "  (cd '${minion_topdir}' && sbt assembly)"  >&2
+  echo                                             >&2
+  exit 1
+fi
+
+#minion_libs="."
+#for j in "${minion_libdir}/"*.jar; do
+#    minion_libs="${minion_libs}:$j"
+#done
+#
+#scala -cp "${minion_libs}" "${minion_jar}" "$@"
+
+scala "${minion_jar}" "$@"
