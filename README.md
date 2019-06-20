@@ -14,7 +14,7 @@ Minion is written in [Scala](https://www.scala-lang.org/) and provides a simple 
 
 ## Setup
 
-`minion` is written in Scala.  To build it, you will need
+Minion is written in Scala.  To build it, you will need
 
  - a Java Runtime Environment, v.1.8 or later
  - the [Scala Build Tool (SBT)](https://www.scala-sbt.org/download.html), v.1.1.1 or later.
@@ -33,13 +33,13 @@ $ brew install z3
 
 ## Usage
 
-The easiest way to run the `minion` tool is through SBT.  E.g. change to the `minion` directory, then run
+The easiest way to run the Minion tool is through SBT.  E.g. change to the `minion` directory, then run
 
 ```sh
 $ sbt "run -h"
 ```
 
-which should print some usage info.  Note the quotes `"` around the `run` command and its arguments.  Without these quotes, SBT will not pass the `-h` option to `minion` but interpret it as an SBT option.  It is important to enclose all command-line arguments for `minion` in quotes, e.g. to run the tool on some example files, use
+which should print some usage info.  Note the quotes `"` around the `run` command and its arguments.  Without these quotes, SBT will not pass the `-h` option to Minion but interpret it as an SBT option.  It is important to enclose all command-line arguments for Minion in quotes, e.g. to run the tool on some example files, use
 
 ```sh
 $ sbt "run examples/Const/Const.java examples/Const/Const.in.OK.txt"
@@ -51,19 +51,19 @@ If you want to invoke the tool repeatedly, you may want to run it from within an
 sbt:Minion> run examples/Const/Const.java examples/Const/Const.in.OK.txt
 ```
 
-If you don't like staring an SBT file, you can instead use the `minion` shell-script included in the repository.  Before you can use the script, you first need to generate a "fat" jar by running
+If you don't like staring an SBT shell, you can instead use the `minion` shell-script included in the repository.  Before you can use the script, you first need to generate a "fat" jar by running
 
 ```sh
 $ sbt assembly
 ```
 
-in the `minion` directory.  After that, you can invoke the script to run `minion`.  For example
+in the `minion` directory.  After that, you can invoke the `minion` script, like so:
 
 ```sh
 $ ./minion examples/Const/Const.java examples/Const/Const.in.OK.txt
 ```
 
-When invoked with the `-h` option, `minion` will print a description of the available command line options.
+When invoked with the `-h` option, the Minion CLI will print a description of the available command line options.
 
 ```sh
 $ ./minion -h
@@ -118,7 +118,7 @@ Checking values for parameter(s) 'y'...
 done.
 ```
 
-Re-running `minion` with the `--mono` flag will switch to monitoring monolithic minimality and should therefore report a violation:
+Re-running Minion with the `--mono` flag will switch to monitoring monolithic minimality and should therefore report a violation:
 
 ```text
 $ sbt "run --mono examples/Add/Add.java examples/Add/Add.in.dist.OK.txt"
@@ -144,7 +144,7 @@ public int compConst(int x, int y) {
 }
 ```
 
-Clearly `compConst` is neither distributed nor monolithic minimal.  But, perhaps surprisingly, there are traces where `minion` will detect a violation of distributed minimality whereas it will not detect a violation of monolithic minimality.  Consider the following set of traces  from `examples/Const/Const.in.fail.txt`:
+Clearly `compConst` is neither distributed nor monolithic minimal.  But, perhaps surprisingly, there are traces where Minion will detect a violation of distributed minimality whereas it will not detect a violation of monolithic minimality.  Consider the following set of traces from `examples/Const/Const.in.fail.txt`:
 
 ```text
 1,2,1
@@ -154,7 +154,7 @@ Clearly `compConst` is neither distributed nor monolithic minimal.  But, perhaps
 5,4,5
 ```
 
-When monitoring for distributed minimality, `minion` will detect a violation given the above traces.
+When monitoring for distributed minimality, Minion will detect a violation given the above traces.
 
 ```text
 $ sbt "run examples/Const/Const.java examples/Const/Const.in.nonmin.txt"
@@ -169,7 +169,7 @@ because, for any choice of value of `x`, the method `compConst` will compute the
 
 Note that this situation does not appear among the observed traces: whenever the respective values for `y` differ between two traces, so do the respective values of `x`.  Instead, the proof/counterexample value for `x` has to be found using the SMT solver.
 
-When monitoring for *monolithic* minimality, however, the SMT solver need not guess any parameters.  Consequently, `minion` will *not* detect a violation of monolithic minimality.  For the above set of traces.
+When monitoring for *monolithic* minimality, however, the SMT solver need not guess any parameters.  Consequently, Minion will *not* detect a violation of monolithic minimality.  For the above set of traces.
 ```text
 $ sbt "run --mono examples/Const/Const.java examples/Const/Const.in.nonmin.txt"
 ...
@@ -188,7 +188,7 @@ done.
 ...
 ```
 
-However, there is a way around this limitation: using the `--eager` flag, `minion` will not just use observed traces, but any *combination* of observed input values – even if that combination of input values does not correspond to any observed trace.  E.g. given the above input traces, `minion` is able to find a violation in eager mode.
+However, there is a way around this limitation: using the `--eager` flag, Minion will not just use observed traces, but any *combination* of observed input values – even if that combination of input values does not correspond to any observed trace.  E.g. given the above input traces, Minion is able to find a violation in eager mode.
 
 ```text
 sbt "run --mono --eager examples/Const/Const.java examples/Const/Const.in.nonmin.txt"
@@ -220,7 +220,7 @@ The method divides the positive integer `x` by the strictly positive integer `y`
  1. unroll the loop down to a fixed depth to obtain an approximate specification;
  2. annotate the loop with a loop invariant, which will allow KeY's symbolic execution engine to merge the different execution paths and give a complete characterization of the method.
 
-The first option is implemented in `minion` using the `-u` or `--unroll` command-line option.  Consider the following execution traces from `examples/Div/Div.in.unroll.OK.txt`:
+The first option is implemented in Minion using the `-u` or `--unroll` command-line option.  Consider the following execution traces from `examples/Div/Div.in.unroll.OK.txt`:
 
 ```text
 1,1,1
@@ -230,7 +230,7 @@ The first option is implemented in `minion` using the `-u` or `--unroll` command
 12,1,12
 ```
 
-Using the `-u` option, `minion` will accept this sequence of traces as monolithic minimal.
+Using the `-u` option, Minion will accept this sequence of traces as monolithic minimal.
 
 ```
 $sbt "run -u --mono -m posDiv examples/Div/DivNoConds.java examples/Div/Div.in.unroll.OK.txt"
@@ -248,7 +248,7 @@ Not enough values to check parameter(s) 'y'.
 done.
 ```
 
-Note the warning about cut-off execution paths: by default, `minion` will explore symbolic execution trees to a depth of 100 nodes (this can be adjusted using the `-d` flag).  Since the `x` values in the above traces are all far below the cut-off limit, the unrolled loop will cover all of these traces.  Indeed, if we were to add the following pair of traces (from `examples/Div/Div.in.unroll.fail.txt`), a violation of monolithic minimality would be detected:
+Note the warning about cut-off execution paths: by default, Minion will explore symbolic execution trees to a depth of 100 nodes (this can be adjusted using the `-d` flag).  Since the `x` values in the above traces are all far below the cut-off limit, the unrolled loop will cover all of these traces.  Indeed, if we were to add the following pair of traces (from `examples/Div/Div.in.unroll.fail.txt`), a violation of monolithic minimality would be detected:
 
 ```
 10,2,5
@@ -257,7 +257,7 @@ Note the warning about cut-off execution paths: by default, `minion` will explor
 
 Note however, that symbolic execution, extraction of the program paths, and monitoring become quite computationally intensive, even for this tiny set of traces.
 
-If we add a single trace with a large `x` value (and retaining `y = 1`), then `minion` will no longer be able to check the entire set of traces.  In particular, it will not detect that the following set of traces
+If we add a single trace with a large `x` value (and retaining `y = 1`), then Minion will no longer be able to check the entire set of traces.  In particular, it will not detect that the following set of traces
 
 ```text
 400,2,400
@@ -299,7 +299,7 @@ int posDiv(int x, int y) {
 }
 ```
 
-Thanks to the loop invariant, the `-u` option is no longer needed, symbolic execution terminates quickly and without cutting of any branches, and `minion` is able to establish that the pathological set of traces above is inconsistent.
+Thanks to the loop invariant, the `-u` option is no longer needed, symbolic execution terminates quickly and without cutting of any branches, and Minion is able to establish that the pathological set of traces above is inconsistent.
 
 ```text
 $sbt "run --mono -m posDiv examples/Div/Div.java examples/Div/Div.in.unroll.falseneg.txt"
